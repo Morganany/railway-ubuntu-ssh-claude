@@ -51,10 +51,12 @@ RUN apt-get update \
 # Generate English and Persian locales / تولید لوکِیل‌های انگلیسی و فارسی
 RUN locale-gen en_US.UTF-8 fa_IR.UTF-8
 
-# ARA TM welcome banner shown on interactive SSH login
-# بنر خوش‌آمد ARA TM که هنگام ورود تعاملی SSH نمایش داده می‌شود
-COPY ara-welcome.sh /etc/profile.d/ara-welcome.sh
-RUN chmod +x /etc/profile.d/ara-welcome.sh
+# Console bersih: matikan banner bawaan Ubuntu & banner lama, pakai welcome.sh sendiri
+# (nama brand diambil dari variabel BRAND_NAME yang dikirim bot)
+RUN rm -rf /etc/update-motd.d/* /etc/legal /etc/profile.d/ara-welcome.sh && : > /etc/motd \
+    && echo "PrintLastLog no" >> /etc/ssh/sshd_config
+COPY welcome.sh /etc/profile.d/welcome.sh
+RUN chmod +x /etc/profile.d/welcome.sh
 
 # Set locale and terminal environment / تنظیم لوکِیل و محیط ترمینال
 ENV LANG=en_US.UTF-8
